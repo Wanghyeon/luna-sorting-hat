@@ -7,6 +7,14 @@ const DEPARTMENTS = [
   { id: "hs", name: "해킹방어과", color: "#1a1c4e", desc: "사이버 보안, 정보 보호, 모의 해킹 등 안전한 디지털 세상을 만드는 화이트 해커를 양성합니다." }
 ];
 
+const hexToRgba = (hex, alpha) => {
+  const cleanHex = hex.replace("#", "");
+  const r = parseInt(cleanHex.slice(0, 2), 16);
+  const g = parseInt(cleanHex.slice(2, 4), 16);
+  const b = parseInt(cleanHex.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export default function Analyzing({ capturedImg, onComplete }) {
   const [currentDeptText, setCurrentDeptText] = useState("");
   const [progress, setProgress] = useState(0);
@@ -48,8 +56,16 @@ export default function Analyzing({ capturedImg, onComplete }) {
     };
   }, []);
 
+  const themeColor = resultDept?.color || "#524b9b";
+  const themedBackground = isDone
+    ? `linear-gradient(180deg, ${hexToRgba(themeColor, 0.16)} 0%, #F9FAFB 46%, ${hexToRgba(themeColor, 0.1)} 100%)`
+    : "#F9FAFB";
+
   return (
-    <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
+    <main
+      className="min-h-dvh text-[#333D4B] transition-[background] duration-700"
+      style={{ background: themedBackground }}
+    >
       <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col px-5 pb-6 pt-6">
         <header className="mb-5">
           <p className="text-[13px] font-bold text-[#524b9b]">
@@ -71,7 +87,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
                 src={capturedImg}
                 alt="Captured"
                 className={`h-full w-full object-cover transition-all duration-700 ${
-                  isDone ? "scale-[1.02] opacity-75 grayscale-[8%]" : "opacity-70"
+                  isDone ? "scale-100 opacity-100 grayscale-0 contrast-105" : "opacity-70"
                 }`}
               />
             )}
@@ -80,18 +96,18 @@ export default function Analyzing({ capturedImg, onComplete }) {
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.25),transparent_32%,rgba(0,0,0,0.34))]" />
           <div
             className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
-              isDone ? "opacity-24" : "opacity-0"
+              isDone ? "opacity-16" : "opacity-0"
             }`}
             style={{
               background: `linear-gradient(145deg, ${
                 resultDept?.color || "#524b9b"
-              } 0%, transparent 62%, rgba(0,0,0,0.18) 100%)`,
+              } 0%, transparent 66%, rgba(0,0,0,0.08) 100%)`,
               mixBlendMode: "overlay",
             }}
           />
           <div
             className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
-              isDone ? "opacity-38" : "opacity-0"
+              isDone ? "opacity-2" : "opacity-0"
             }`}
             style={{
               background: `radial-gradient(circle at 50% 30%, ${
