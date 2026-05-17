@@ -165,12 +165,24 @@ export default function Result({ dept, onRestart }) {
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.24),inset_0_-22px_44px_rgba(0,0,0,0.18)]" />
+                <img
+                  src="/dimigo-logo-white.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-4 top-8 w-36 opacity-[0.11]"
+                />
                 {/* 빛 반사 효과 */}
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_34%,transparent_62%)]" />
                 <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/10 blur-xl" />
                 
                 <div className="relative z-10">
-                  <span className="inline-flex rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
+                    <img
+                      src="/dimigo-logo-white.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="h-3.5 w-auto opacity-80"
+                    />
                     추천 학과
                   </span>
                   <h3 className="mt-4 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
