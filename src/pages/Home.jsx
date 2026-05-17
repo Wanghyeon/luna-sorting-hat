@@ -41,7 +41,7 @@ export default function Home({ onCaptureComplete }) {
             </h1>
 
             <p className="mt-5 max-w-[320px] text-[15px] font-medium leading-[1.72] text-[#4E5968] [word-break:keep-all]">
-              사진을 찍으면 디미고 4개 학과 중 하나를 가볍게 매칭해드려요.
+              사진을 찍으면 디미고 4개 학과 중 하나를 매칭해드려요.
               결과는 재미로만 즐겨주세요.
             </p>
 
