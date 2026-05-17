@@ -4,17 +4,18 @@ import { ExternalLink, RotateCcw } from "lucide-react";
 export default function Result({ dept, onRestart }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [glare, setGlare] = useState({ x: 50, y: 24, opacity: 0 });
   const cardRef = useRef(null);
+  const pointerRef = useRef({
+    isDown: false,
+    moved: false,
+    pointerType: "mouse",
+    startX: 0,
+    startY: 0,
+  });
 
-  // 마우스 및 터치 이동 시 3D 기울임 각도 계산
-  const handleMove = (e) => {
+  const applyTilt = (clientX, clientY, strength) => {
     if (!cardRef.current) return;
     const card = cardRef.current.getBoundingClientRect();
-    
-    // 모바일 터치와 PC 마우스 이벤트 둘 다 처리
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
     const x = clientX - card.left;
     const y = clientY - card.top;
@@ -24,22 +25,67 @@ export default function Result({ dept, onRestart }) {
     const ratioX = (x - centerX) / centerX;
     const ratioY = (y - centerY) / centerY;
 
-    // 최대 11도까지만 부드럽게 기울어지도록 설정
-    const rotateX = Math.max(Math.min(ratioY * -11, 11), -11);
-    const rotateY = Math.max(Math.min(ratioX * 11, 11), -11);
+    const rotateX = Math.max(Math.min(ratioY * -strength, strength), -strength);
+    const rotateY = Math.max(Math.min(ratioX * strength, strength), -strength);
 
     setTilt({ x: rotateX, y: rotateY });
-    setGlare({
-      x: Math.max(Math.min((x / card.width) * 100, 100), 0),
-      y: Math.max(Math.min((y / card.height) * 100, 100), 0),
-      opacity: 0.26,
-    });
   };
 
-  // 손을 떼면 카드가 원래 평면으로 스르륵 돌아옴
-  const handleLeave = () => {
+  const resetTilt = () => {
     setTilt({ x: 0, y: 0 });
-    setGlare({ x: 50, y: 24, opacity: 0 });
+  };
+
+  const handlePointerDown = (e) => {
+    pointerRef.current = {
+      isDown: true,
+      moved: false,
+      pointerType: e.pointerType,
+      startX: e.clientX,
+      startY: e.clientY,
+    };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 5 : 9);
+  };
+
+  const handlePointerMove = (e) => {
+    const pointer = pointerRef.current;
+
+    if (pointer.isDown) {
+      const distance = Math.hypot(e.clientX - pointer.startX, e.clientY - pointer.startY);
+      if (distance > 10) pointer.moved = true;
+    }
+
+    if (e.pointerType === "mouse" || pointer.isDown) {
+      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 5 : 9);
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    const pointer = pointerRef.current;
+    const distance = Math.hypot(e.clientX - pointer.startX, e.clientY - pointer.startY);
+    const shouldFlip = pointer.isDown && !pointer.moved && distance < 10;
+
+    pointerRef.current = {
+      ...pointer,
+      isDown: false,
+    };
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    resetTilt();
+
+    if (shouldFlip) {
+      setIsFlipped((prev) => !prev);
+    }
+  };
+
+  const handlePointerLeave = (e) => {
+    if (e.pointerType === "mouse" || !pointerRef.current.isDown) {
+      resetTilt();
+    }
+  };
+
+  const handlePointerCancel = () => {
+    pointerRef.current.isDown = false;
+    resetTilt();
   };
 
   return (
@@ -63,12 +109,12 @@ export default function Result({ dept, onRestart }) {
           {/* 기울임(Tilt) 애니메이션 래퍼 */}
           <div
             ref={cardRef}
-            onMouseMove={handleMove}
-            onMouseLeave={handleLeave}
-            onTouchMove={handleMove}
-            onTouchEnd={handleLeave}
-            onClick={() => setIsFlipped(!isFlipped)}
-            className="h-full w-full cursor-pointer touch-pan-y transition-transform will-change-transform"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerLeave}
+            onPointerCancel={handlePointerCancel}
+            className="h-full w-full cursor-pointer touch-none transition-transform will-change-transform"
             style={{
               transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${
                 tilt.x || tilt.y ? 1.018 : 1
@@ -76,6 +122,7 @@ export default function Result({ dept, onRestart }) {
               transitionDuration: tilt.x === 0 && tilt.y === 0 ? "650ms" : "80ms",
               transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               transformStyle: "preserve-3d",
+              WebkitTransformStyle: "preserve-3d",
             }}
           >
             {/* 뒤집기(Flip) 애니메이션 래퍼 */}
@@ -83,6 +130,7 @@ export default function Result({ dept, onRestart }) {
               className="relative h-full w-full rounded-[30px] shadow-[0_24px_64px_rgba(15,23,42,0.2)] transition-transform duration-[850ms] will-change-transform"
               style={{ 
                 transformStyle: "preserve-3d", 
+                WebkitTransformStyle: "preserve-3d",
                 transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                 transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               }}
@@ -92,19 +140,13 @@ export default function Result({ dept, onRestart }) {
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-left text-white"
                 style={{ 
                   background: `linear-gradient(145deg, ${dept?.color || "#2b274b"} 0%, ${dept?.color || "#2b274b"} 56%, #111827 100%)`, 
-                  backfaceVisibility: "hidden" 
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "translateZ(0)",
                 }}
               >
                 {/* 빛 반사 효과 */}
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.04)_36%,transparent_64%)]" />
-                <div
-                  className="pointer-events-none absolute h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white blur-2xl transition-opacity duration-200"
-                  style={{
-                    left: `${glare.x}%`,
-                    top: `${glare.y}%`,
-                    opacity: glare.opacity,
-                  }}
-                />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_34%,transparent_62%)]" />
                 
                 <div className="relative z-10">
                   <span className="inline-flex rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
@@ -134,24 +176,17 @@ export default function Result({ dept, onRestart }) {
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-white"
                 style={{ 
                   background: "linear-gradient(145deg, #524b9b 0%, #675ab8 60%, #907fdf 100%)", 
-                  transform: "rotateY(180deg)", 
-                  backfaceVisibility: "hidden" 
+                  transform: "rotateY(180deg) translateZ(0)", 
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.04)_45%,transparent_70%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_45%,transparent_70%)]" />
                 <img
                   src="/luna-logo.svg"
                   alt=""
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-8 -top-6 w-40 opacity-15"
-                />
-                <div
-                  className="pointer-events-none absolute h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white blur-2xl transition-opacity duration-200"
-                  style={{
-                    left: `${glare.x}%`,
-                    top: `${glare.y}%`,
-                    opacity: glare.opacity,
-                  }}
                 />
 
                 <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">

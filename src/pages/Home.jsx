@@ -110,6 +110,7 @@ export default function Home({ onCaptureComplete }) {
               <Webcam
                 audio={false}
                 ref={webcamRef}
+                mirrored={facingMode === "user"}
                 screenshotFormat="image/jpeg"
                 videoConstraints={{ facingMode }}
                 onUserMediaError={() => setHasCamera(false)}
