@@ -44,7 +44,7 @@ export default function Result({ dept, onRestart }) {
       startY: e.clientY,
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 5 : 9);
+    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 10 : 14);
   };
 
   const handlePointerMove = (e) => {
@@ -56,7 +56,7 @@ export default function Result({ dept, onRestart }) {
     }
 
     if (e.pointerType === "mouse" || pointer.isDown) {
-      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 5 : 9);
+      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 10 : 14);
     }
   };
 
@@ -117,9 +117,9 @@ export default function Result({ dept, onRestart }) {
             className="h-full w-full cursor-pointer touch-none transition-transform will-change-transform"
             style={{
               transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${
-                tilt.x || tilt.y ? 1.018 : 1
+                tilt.x || tilt.y ? 1.035 : 1
               })`,
-              transitionDuration: tilt.x === 0 && tilt.y === 0 ? "650ms" : "80ms",
+              transitionDuration: tilt.x === 0 && tilt.y === 0 ? "620ms" : "45ms",
               transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               transformStyle: "preserve-3d",
               WebkitTransformStyle: "preserve-3d",
