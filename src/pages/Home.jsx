@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 import Swal from "sweetalert2";
 import { Camera, RefreshCw, ShieldCheck } from "lucide-react";
@@ -8,24 +8,6 @@ export default function Home({ onCaptureComplete }) {
   const webcamRef = useRef(null);
   const [facingMode, setFacingMode] = useState("user");
   const [hasCamera, setHasCamera] = useState(true);
-
-  // 처음 진입 시 알림창 띄우기
-  useEffect(() => {
-    Swal.fire({
-      title: "안내",
-      text: "사진과 정보는 저장되지 않아요. 결과는 재미로만 봐주세요.",
-      icon: "info",
-      confirmButtonText: "확인",
-      confirmButtonColor: "#524b9b",
-      background: "#ffffff",
-      color: "#333D4B",
-      allowOutsideClick: false,
-      customClass: {
-        popup: "rounded-[28px] shadow-[0_24px_70px_rgba(15,23,42,0.18)]",
-        confirmButton: "rounded-2xl px-6 py-3 font-bold",
-      },
-    });
-  }, []);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();

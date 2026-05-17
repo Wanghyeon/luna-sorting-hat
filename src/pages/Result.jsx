@@ -4,6 +4,8 @@ import { ExternalLink, RotateCcw } from "lucide-react";
 export default function Result({ dept, onRestart }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const cardRef = useRef(null);
   const pointerRef = useRef({
     isDown: false,
@@ -36,6 +38,8 @@ export default function Result({ dept, onRestart }) {
   };
 
   const handlePointerDown = (e) => {
+    setIsInteracting(true);
+    setHasInteracted(true);
     pointerRef.current = {
       isDown: true,
       moved: false,
@@ -44,7 +48,7 @@ export default function Result({ dept, onRestart }) {
       startY: e.clientY,
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 10 : 14);
+    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 18 : 14);
   };
 
   const handlePointerMove = (e) => {
@@ -56,7 +60,7 @@ export default function Result({ dept, onRestart }) {
     }
 
     if (e.pointerType === "mouse" || pointer.isDown) {
-      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 10 : 14);
+      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 18 : 14);
     }
   };
 
@@ -70,6 +74,7 @@ export default function Result({ dept, onRestart }) {
       isDown: false,
     };
     e.currentTarget.releasePointerCapture?.(e.pointerId);
+    setIsInteracting(false);
     resetTilt();
 
     if (shouldFlip) {
@@ -79,14 +84,19 @@ export default function Result({ dept, onRestart }) {
 
   const handlePointerLeave = (e) => {
     if (e.pointerType === "mouse" || !pointerRef.current.isDown) {
+      setIsInteracting(false);
       resetTilt();
     }
   };
 
   const handlePointerCancel = () => {
     pointerRef.current.isDown = false;
+    setIsInteracting(false);
     resetTilt();
   };
+
+  const isTilting = Math.abs(tilt.x) > 0.01 || Math.abs(tilt.y) > 0.01;
+  const shouldIdleAnimate = !isInteracting && !isTilting;
 
   return (
     <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
@@ -104,8 +114,15 @@ export default function Result({ dept, onRestart }) {
         {/* 3D 인터랙티브 카드 영역 */}
         <section
           className="relative mx-auto my-6 w-full max-w-[300px] aspect-[3/4.18]"
-          style={{ perspective: "1200px" }}
+          style={{ perspective: "1500px" }}
         >
+          {!hasInteracted && (
+            <div className="pointer-events-none absolute -left-8 -right-8 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between px-1 text-[#524b9b]/55">
+              <span className="swipe-hint-left text-[30px] font-black leading-none">‹</span>
+              <span className="swipe-hint-right text-[30px] font-black leading-none">›</span>
+            </div>
+          )}
+
           {/* 기울임(Tilt) 애니메이션 래퍼 */}
           <div
             ref={cardRef}
@@ -114,12 +131,14 @@ export default function Result({ dept, onRestart }) {
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
             onPointerCancel={handlePointerCancel}
-            className="h-full w-full cursor-pointer touch-none transition-transform will-change-transform"
+            className={`h-full w-full cursor-grab touch-none transition-transform will-change-transform active:cursor-grabbing ${
+              shouldIdleAnimate ? "card-idle-demo" : ""
+            }`}
             style={{
-              transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${
-                tilt.x || tilt.y ? 1.035 : 1
-              })`,
-              transitionDuration: tilt.x === 0 && tilt.y === 0 ? "620ms" : "45ms",
+              transform: isTilting
+                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translate3d(${tilt.y * 0.35}px, ${-tilt.x * 0.22}px, 0) scale(1.055)`
+                : undefined,
+              transitionDuration: isTilting ? "34ms" : "620ms",
               transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               transformStyle: "preserve-3d",
               WebkitTransformStyle: "preserve-3d",
@@ -127,7 +146,7 @@ export default function Result({ dept, onRestart }) {
           >
             {/* 뒤집기(Flip) 애니메이션 래퍼 */}
             <div 
-              className="relative h-full w-full rounded-[30px] shadow-[0_24px_64px_rgba(15,23,42,0.2)] transition-transform duration-[850ms] will-change-transform"
+              className="relative h-full w-full rounded-[30px] shadow-[0_26px_70px_rgba(15,23,42,0.24)] transition-transform duration-[850ms] will-change-transform"
               style={{ 
                 transformStyle: "preserve-3d", 
                 WebkitTransformStyle: "preserve-3d",
@@ -145,8 +164,10 @@ export default function Result({ dept, onRestart }) {
                   transform: "translateZ(0)",
                 }}
               >
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.24),inset_0_-22px_44px_rgba(0,0,0,0.18)]" />
                 {/* 빛 반사 효과 */}
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_34%,transparent_62%)]" />
+                <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/10 blur-xl" />
                 
                 <div className="relative z-10">
                   <span className="inline-flex rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
@@ -158,8 +179,8 @@ export default function Result({ dept, onRestart }) {
                 </div>
                 
                 <div
-                  className="relative z-10 mt-auto rounded-[22px] border border-white/16 bg-white/13 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-xl"
-                  style={{ transform: "translateZ(34px)" }}
+                  className="relative z-10 mt-auto rounded-[22px] border border-white/18 bg-white/14 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-xl"
+                  style={{ transform: "translateZ(42px)" }}
                 >
                   <p className="text-[14px] font-semibold leading-[1.68] text-white/92 [word-break:keep-all]">
                     {dept?.desc}
@@ -181,7 +202,9 @@ export default function Result({ dept, onRestart }) {
                   WebkitBackfaceVisibility: "hidden",
                 }}
               >
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.26),inset_0_-24px_48px_rgba(39,32,96,0.18)]" />
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_45%,transparent_70%)]" />
+                <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/12 blur-xl" />
                 <img
                   src="/luna-logo.svg"
                   alt=""
