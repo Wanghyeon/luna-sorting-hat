@@ -71,13 +71,35 @@ export default function Analyzing({ capturedImg, onComplete }) {
                 src={capturedImg}
                 alt="Captured"
                 className={`h-full w-full object-cover transition-all duration-700 ${
-                  isDone ? "scale-[1.02] opacity-45 grayscale-[20%]" : "opacity-70"
+                  isDone ? "scale-[1.02] opacity-75 grayscale-[8%]" : "opacity-70"
                 }`}
               />
             )}
           </div>
 
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.25),transparent_32%,rgba(0,0,0,0.34))]" />
+          <div
+            className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
+              isDone ? "opacity-24" : "opacity-0"
+            }`}
+            style={{
+              background: `linear-gradient(145deg, ${
+                resultDept?.color || "#524b9b"
+              } 0%, transparent 62%, rgba(0,0,0,0.18) 100%)`,
+              mixBlendMode: "overlay",
+            }}
+          />
+          <div
+            className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
+              isDone ? "opacity-38" : "opacity-0"
+            }`}
+            style={{
+              background: `radial-gradient(circle at 50% 30%, ${
+                resultDept?.color || "#907fdf"
+              } 0%, transparent 62%)`,
+              mixBlendMode: "color",
+            }}
+          />
           <div
             className={`pointer-events-none absolute left-6 right-6 h-[3px] rounded-full bg-white/80 shadow-[0_0_22px_rgba(255,255,255,0.7)] transition-all duration-100 ${
               isDone ? "opacity-0" : "opacity-100"
@@ -86,8 +108,18 @@ export default function Analyzing({ capturedImg, onComplete }) {
           />
 
           <div className="absolute left-4 right-4 top-4">
-            <div className="mx-auto max-w-[292px] rounded-[20px] border border-white/60 bg-white/92 px-4 py-3.5 text-center shadow-[0_14px_34px_rgba(15,23,42,0.15)] backdrop-blur-xl">
-              <p className="mb-1 text-[12px] font-bold text-[#524b9b]/75">
+            <div
+              className="mx-auto max-w-[292px] rounded-[20px] border border-white/60 bg-white/92 px-4 py-3.5 text-center shadow-[0_14px_34px_rgba(15,23,42,0.15)] backdrop-blur-xl transition-colors duration-700"
+              style={{
+                boxShadow: isDone
+                  ? `0 16px 38px ${resultDept?.color || "#524b9b"}33`
+                  : "0 14px 34px rgba(15,23,42,0.15)",
+              }}
+            >
+              <p
+                className="mb-1 text-[12px] font-bold transition-colors duration-700"
+                style={{ color: isDone ? resultDept?.color : "#524b9bbf" }}
+              >
                 {isDone ? "추천 학과" : "후보를 확인하고 있어요"}
               </p>
               <span className="block min-h-[30px] text-[22px] font-black leading-tight tracking-normal text-[#191F28] [word-break:keep-all]">
