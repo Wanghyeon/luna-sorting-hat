@@ -116,13 +116,6 @@ export default function Analyzing({ capturedImg, onComplete }) {
               mixBlendMode: "color",
             }}
           />
-          <div
-            className={`pointer-events-none absolute left-6 right-6 h-[3px] rounded-full bg-white/80 shadow-[0_0_22px_rgba(255,255,255,0.7)] transition-all duration-100 ${
-              isDone ? "opacity-0" : "opacity-100"
-            }`}
-            style={{ top: `${Math.min(progress, 96)}%` }}
-          />
-
           <div className="absolute left-4 right-4 top-4">
             <div
               className="mx-auto max-w-[292px] rounded-[20px] border border-white/60 bg-white/92 px-4 py-3.5 text-center shadow-[0_14px_34px_rgba(15,23,42,0.15)] backdrop-blur-xl transition-colors duration-700"

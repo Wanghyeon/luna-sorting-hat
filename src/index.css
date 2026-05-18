@@ -62,3 +62,52 @@ body {
 .swipe-hint-right {
   animation: swipe-hint-right 1.45s ease-in-out infinite;
 }
+
+@keyframes result-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes result-stagger {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card-enter {
+  animation: result-card-enter 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.result-stagger-1,
+.result-stagger-2,
+.result-stagger-3,
+.result-stagger-4 {
+  animation: result-stagger 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.result-stagger-1 {
+  animation-delay: 120ms;
+}
+
+.result-stagger-2 {
+  animation-delay: 210ms;
+}
+
+.result-stagger-3 {
+  animation-delay: 300ms;
+}
+
+.result-stagger-4 {
+  animation-delay: 390ms;
+}

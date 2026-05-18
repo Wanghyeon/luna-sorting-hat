@@ -1,5 +1,12 @@
 import { useState, useRef } from "react";
-import { ExternalLink, RotateCcw } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Code2,
+  ExternalLink,
+  Palette,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 
 const hexToRgb = (hex) => {
   const fallback = { r: 43, g: 39, b: 75 };
@@ -24,6 +31,29 @@ const hexToRgb = (hex) => {
     g: (number >> 8) & 255,
     b: number & 255,
   };
+};
+
+const DEPT_META = {
+  eb: {
+    Icon: BriefcaseBusiness,
+    keyword: "서비스 감각",
+    type: "아이디어를 현실적인 비즈니스로 키우는 타입",
+  },
+  dc: {
+    Icon: Palette,
+    keyword: "크리에이티브",
+    type: "보이는 경험을 멋지게 설계하는 타입",
+  },
+  wp: {
+    Icon: Code2,
+    keyword: "빌더",
+    type: "상상을 바로 서비스로 구현하는 타입",
+  },
+  hs: {
+    Icon: ShieldCheck,
+    keyword: "문제 해결",
+    type: "허점을 찾고 단단하게 만드는 타입",
+  },
 };
 
 export default function Result({ dept, onRestart }) {
@@ -126,6 +156,8 @@ export default function Result({ dept, onRestart }) {
     deptColor.g - 34,
     0,
   )}, ${Math.max(deptColor.b - 34, 0)}, 0.78)`;
+  const deptMeta = DEPT_META[dept?.id] || DEPT_META.wp;
+  const DeptIcon = deptMeta.Icon;
 
   return (
     <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
@@ -142,7 +174,7 @@ export default function Result({ dept, onRestart }) {
 
         {/* 3D 인터랙티브 카드 영역 */}
         <section
-          className="relative mx-auto my-6 w-full max-w-[300px] aspect-[3/4.18]"
+          className="result-card-enter relative mx-auto my-6 w-full max-w-[300px] aspect-[3/4.18]"
           style={{ perspective: "1500px" }}
         >
           {!hasInteracted && (
@@ -202,26 +234,23 @@ export default function Result({ dept, onRestart }) {
                 />
                 {/* 빛 반사 효과 */}
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.07)_32%,transparent_64%)]" />
-                <div className="pointer-events-none absolute left-5 right-5 top-4 h-px bg-white/60" />
                 <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
                 
                 <div className="relative z-10">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
-                    <img
-                      src="/dimigo-logo-white.png"
-                      alt=""
-                      aria-hidden="true"
-                      className="h-3.5 w-auto opacity-80"
-                    />
-                    추천 학과
+                  <span className="result-stagger-1 inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
+                    <DeptIcon size={14} strokeWidth={2.6} />
+                    {deptMeta.keyword}
                   </span>
-                  <h3 className="mt-4 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
+                  <h3 className="result-stagger-2 mt-4 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
                     {dept?.name}
                   </h3>
+                  <p className="result-stagger-3 mt-3 text-[13px] font-bold leading-[1.55] text-white/78 [word-break:keep-all]">
+                    {deptMeta.type}
+                  </p>
                 </div>
                 
                 <div
-                  className="relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
+                  className="result-stagger-4 relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
                   style={{ transform: "translateZ(42px)" }}
                 >
                   <p className="text-[14px] font-semibold leading-[1.68] text-white/92 [word-break:keep-all]">
@@ -248,7 +277,6 @@ export default function Result({ dept, onRestart }) {
               >
                 <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/38 shadow-[inset_0_1px_0_rgba(255,255,255,0.48),inset_0_-24px_48px_rgba(39,32,96,0.16)]" />
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.27)_0%,rgba(255,255,255,0.07)_42%,transparent_70%)]" />
-                <div className="pointer-events-none absolute left-5 right-5 top-4 h-px bg-white/60" />
                 <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
                 <img
                   src="/luna-logo.svg"
@@ -291,7 +319,7 @@ export default function Result({ dept, onRestart }) {
             className="flex w-full items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 py-4 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98]"
           >
             <RotateCcw size={20} strokeWidth={2.4} />
-            다시 검사하기
+            다른 결과 보기
           </button>
           <button
             className="flex w-full items-center justify-center gap-2 rounded-[21px] border border-[#E5E8EF] bg-white px-5 py-4 text-[15px] font-extrabold text-[#524b9b] shadow-[0_10px_24px_rgba(15,23,42,0.075)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F3F1FF] active:translate-y-0 active:scale-[0.98]"
