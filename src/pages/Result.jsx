@@ -15,17 +15,15 @@ export default function Result({ dept, onRestart }) {
     startY: 0,
   });
 
-  const applyTilt = (clientX, clientY, strength) => {
+  const applyDragTilt = (clientX, clientY, strength) => {
     if (!cardRef.current) return;
     const card = cardRef.current.getBoundingClientRect();
+    const pointer = pointerRef.current;
 
-    const x = clientX - card.left;
-    const y = clientY - card.top;
-
-    const centerX = card.width / 2;
-    const centerY = card.height / 2;
-    const ratioX = (x - centerX) / centerX;
-    const ratioY = (y - centerY) / centerY;
+    const deltaX = clientX - pointer.startX;
+    const deltaY = clientY - pointer.startY;
+    const ratioX = deltaX / (card.width * 0.42);
+    const ratioY = deltaY / (card.height * 0.42);
 
     const rotateX = Math.max(Math.min(ratioY * -strength, strength), -strength);
     const rotateY = Math.max(Math.min(ratioX * strength, strength), -strength);
@@ -48,7 +46,7 @@ export default function Result({ dept, onRestart }) {
       startY: e.clientY,
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 18 : 14);
+    resetTilt();
   };
 
   const handlePointerMove = (e) => {
@@ -59,8 +57,8 @@ export default function Result({ dept, onRestart }) {
       if (distance > 10) pointer.moved = true;
     }
 
-    if (e.pointerType === "mouse" || pointer.isDown) {
-      applyTilt(e.clientX, e.clientY, e.pointerType === "touch" ? 18 : 14);
+    if (pointer.isDown) {
+      applyDragTilt(e.clientX, e.clientY, e.pointerType === "mouse" ? 14 : 18);
     }
   };
 
@@ -82,8 +80,8 @@ export default function Result({ dept, onRestart }) {
     }
   };
 
-  const handlePointerLeave = (e) => {
-    if (e.pointerType === "mouse" || !pointerRef.current.isDown) {
+  const handlePointerLeave = () => {
+    if (!pointerRef.current.isDown) {
       setIsInteracting(false);
       resetTilt();
     }
@@ -96,7 +94,7 @@ export default function Result({ dept, onRestart }) {
   };
 
   const isTilting = Math.abs(tilt.x) > 0.01 || Math.abs(tilt.y) > 0.01;
-  const shouldIdleAnimate = !isInteracting && !isTilting;
+  const shouldIdleAnimate = !hasInteracted && !isInteracting && !isTilting;
 
   return (
     <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
@@ -135,9 +133,7 @@ export default function Result({ dept, onRestart }) {
               shouldIdleAnimate ? "card-idle-demo" : ""
             }`}
             style={{
-              transform: isTilting
-                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translate3d(${tilt.y * 0.35}px, ${-tilt.x * 0.22}px, 0) scale(1.055)`
-                : undefined,
+              transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translate3d(${tilt.y * 0.35}px, ${-tilt.x * 0.22}px, 0)`,
               transitionDuration: isTilting ? "34ms" : "620ms",
               transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               transformStyle: "preserve-3d",

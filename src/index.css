@@ -20,10 +20,10 @@ body {
 @keyframes card-idle-demo {
   0%,
   100% {
-    transform: rotateX(0deg) rotateY(-5deg) translate3d(0, 0, 0) scale(1);
+    transform: rotateX(0deg) rotateY(-5deg) translate3d(0, 0, 0);
   }
   50% {
-    transform: rotateX(1.4deg) rotateY(6deg) translate3d(0, -3px, 0) scale(1.012);
+    transform: rotateX(1.4deg) rotateY(6deg) translate3d(0, -3px, 0);
   }
 }
 
