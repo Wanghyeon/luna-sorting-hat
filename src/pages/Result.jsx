@@ -1,6 +1,31 @@
 import { useState, useRef } from "react";
 import { ExternalLink, RotateCcw } from "lucide-react";
 
+const hexToRgb = (hex) => {
+  const fallback = { r: 43, g: 39, b: 75 };
+  if (!hex) return fallback;
+
+  const value = hex.replace("#", "");
+  const normalized =
+    value.length === 3
+      ? value
+          .split("")
+          .map((char) => char + char)
+          .join("")
+      : value;
+
+  if (normalized.length !== 6) return fallback;
+
+  const number = Number.parseInt(normalized, 16);
+  if (Number.isNaN(number)) return fallback;
+
+  return {
+    r: (number >> 16) & 255,
+    g: (number >> 8) & 255,
+    b: number & 255,
+  };
+};
+
 export default function Result({ dept, onRestart }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -95,6 +120,12 @@ export default function Result({ dept, onRestart }) {
 
   const isTilting = Math.abs(tilt.x) > 0.01 || Math.abs(tilt.y) > 0.01;
   const shouldIdleAnimate = !hasInteracted && !isInteracting && !isTilting;
+  const deptColor = hexToRgb(dept?.color);
+  const deptGlass = `rgba(${deptColor.r}, ${deptColor.g}, ${deptColor.b}, 0.68)`;
+  const deptGlassDeep = `rgba(${Math.max(deptColor.r - 34, 0)}, ${Math.max(
+    deptColor.g - 34,
+    0,
+  )}, ${Math.max(deptColor.b - 34, 0)}, 0.78)`;
 
   return (
     <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
@@ -154,13 +185,15 @@ export default function Result({ dept, onRestart }) {
               <div 
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-left text-white"
                 style={{ 
-                  background: `linear-gradient(145deg, ${dept?.color || "#2b274b"} 0%, ${dept?.color || "#2b274b"} 56%, #111827 100%)`, 
+                  background: `linear-gradient(145deg, ${deptGlass} 0%, ${deptGlass} 52%, ${deptGlassDeep} 100%)`,
+                  backdropFilter: "blur(22px) saturate(148%)",
+                  WebkitBackdropFilter: "blur(22px) saturate(148%)",
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                   transform: "translateZ(0)",
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.24),inset_0_-22px_44px_rgba(0,0,0,0.18)]" />
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/36 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-24px_48px_rgba(0,0,0,0.16)]" />
                 <img
                   src="/dimigo-logo-white.png"
                   alt=""
@@ -168,8 +201,9 @@ export default function Result({ dept, onRestart }) {
                   className="pointer-events-none absolute -right-4 top-8 w-36 opacity-[0.11]"
                 />
                 {/* 빛 반사 효과 */}
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_34%,transparent_62%)]" />
-                <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/10 blur-xl" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.07)_32%,transparent_64%)]" />
+                <div className="pointer-events-none absolute left-5 right-5 top-4 h-px bg-white/60" />
+                <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
                 
                 <div className="relative z-10">
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
@@ -187,7 +221,7 @@ export default function Result({ dept, onRestart }) {
                 </div>
                 
                 <div
-                  className="relative z-10 mt-auto rounded-[22px] border border-white/18 bg-white/14 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-xl"
+                  className="relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
                   style={{ transform: "translateZ(42px)" }}
                 >
                   <p className="text-[14px] font-semibold leading-[1.68] text-white/92 [word-break:keep-all]">
@@ -204,15 +238,18 @@ export default function Result({ dept, onRestart }) {
               <div 
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-white"
                 style={{ 
-                  background: "linear-gradient(145deg, #524b9b 0%, #675ab8 60%, #907fdf 100%)", 
+                  background: "linear-gradient(145deg, rgba(82,75,155,0.68) 0%, rgba(103,90,184,0.68) 58%, rgba(144,127,223,0.72) 100%)",
+                  backdropFilter: "blur(22px) saturate(148%)",
+                  WebkitBackdropFilter: "blur(22px) saturate(148%)",
                   transform: "rotateY(180deg) translateZ(0)", 
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.26),inset_0_-24px_48px_rgba(39,32,96,0.18)]" />
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.025)_45%,transparent_70%)]" />
-                <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/12 blur-xl" />
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/38 shadow-[inset_0_1px_0_rgba(255,255,255,0.48),inset_0_-24px_48px_rgba(39,32,96,0.16)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.27)_0%,rgba(255,255,255,0.07)_42%,transparent_70%)]" />
+                <div className="pointer-events-none absolute left-5 right-5 top-4 h-px bg-white/60" />
+                <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
                 <img
                   src="/luna-logo.svg"
                   alt=""
@@ -221,7 +258,7 @@ export default function Result({ dept, onRestart }) {
                 />
 
                 <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
-                  <div className="mb-5 flex h-[66px] w-[66px] items-center justify-center rounded-[24px] border border-white/22 bg-white/16 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-md">
+                  <div className="mb-5 flex h-[66px] w-[66px] items-center justify-center rounded-[24px] border border-white/30 bg-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.44)] backdrop-blur-xl">
                     <img
                       src="/luna-logo.svg"
                       alt=""

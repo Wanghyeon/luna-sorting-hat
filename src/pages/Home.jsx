@@ -45,8 +45,8 @@ export default function Home({ onCaptureComplete }) {
               결과는 재미로만 즐겨주세요.
             </p>
 
-            <div className="mt-7 flex w-full items-center gap-3 rounded-[20px] border border-[#E5E8EF] bg-white px-4 py-3.5 text-left shadow-[0_14px_36px_rgba(15,23,42,0.055)]">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[15px] bg-[#524b9b]/10 text-[#524b9b]">
+            <div className="mt-7 flex w-full items-center gap-3 rounded-[20px] border border-white/70 bg-white/56 px-4 py-3.5 text-left shadow-[0_18px_42px_rgba(82,75,155,0.12),inset_0_1px_0_rgba(255,255,255,0.86)] backdrop-blur-xl">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[15px] border border-white/70 bg-white/46 text-[#524b9b] shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] backdrop-blur-md">
                 <ShieldCheck size={18} strokeWidth={2.5} />
               </div>
               <p className="text-[13px] font-semibold leading-[1.55] text-[#6B7684]">
