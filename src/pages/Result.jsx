@@ -100,7 +100,7 @@ const MoneyEmoji = ({ className = "", ...props }) => (
   <span
     aria-hidden="true"
     className={`${className} inline-flex items-center justify-center`}
-    style={{ fontSize: "4rem", lineHeight: 1 }}
+    style={{ fontSize: "2.5rem", lineHeight: 1 }}
     {...props}
   >
     💵
@@ -320,29 +320,25 @@ export default function Result({ dept, onRestart }) {
                   transform: "translateZ(0)",
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/36 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-24px_48px_rgba(0,0,0,0.16)]" />
-                {/* dimigo 로고 제거 - DeptIcon을 중앙에 배치합니다 */}
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-24px_48px_rgba(0,0,0,0.16)]" />
                 {/* 빛 반사 효과 */}
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.07)_32%,transparent_64%)]" />
-                <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0.14)_32%,transparent_64%)]" />
+                <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/30 blur-xl" />
                 <DeptIcon
                   aria-hidden="true"
                   strokeWidth={1.7}
-                  className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2 h-36 w-36 -rotate-12 text-white"
-                  style={{ top: "42%" }}
+                  className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2 h-32 w-32 text-white opacity-80"
+                  style={{ top: "38%" }}
                 />
                 
                 <div className="relative z-10">
                   <h3 className="result-stagger-1 mt-2 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
                     {dept?.name}
                   </h3>
-                  <p className="result-stagger-2 mt-3 text-[13px] font-bold leading-[1.55] text-white/78 [word-break:keep-all]">
-                    {deptMeta.type}
-                  </p>
                 </div>
                 
                 <div
-                  className="result-stagger-3 relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
+                  className="result-stagger-3 relative z-10 mt-auto rounded-[22px] border border-white/50 bg-white/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
                   style={{ transform: "translateZ(42px)" }}
                 >
                   <p className="text-[14px] font-semibold leading-[1.68] text-white/92 [word-break:keep-all]">
@@ -359,7 +355,7 @@ export default function Result({ dept, onRestart }) {
               <div 
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-white"
                 style={{ 
-                  background: "linear-gradient(145deg, rgba(82,75,155,0.68) 0%, rgba(103,90,184,0.68) 58%, rgba(144,127,223,0.72) 100%)",
+                  background: "linear-gradient(145deg, rgba(82,75,155,0.85) 0%, rgba(103,90,184,0.85) 58%, rgba(144,127,223,0.9) 100%)",
                   backdropFilter: "blur(22px) saturate(148%)",
                   WebkitBackdropFilter: "blur(22px) saturate(148%)",
                   transform: "rotateY(180deg) translateZ(0)", 
@@ -367,23 +363,23 @@ export default function Result({ dept, onRestart }) {
                   WebkitBackfaceVisibility: "hidden",
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/38 shadow-[inset_0_1px_0_rgba(255,255,255,0.48),inset_0_-24px_48px_rgba(39,32,96,0.16)]" />
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.27)_0%,rgba(255,255,255,0.07)_42%,transparent_70%)]" />
-                <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
+                <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.48),inset_0_-24px_48px_rgba(39,32,96,0.16)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0.14)_42%,transparent_70%)]" />
+                <div className="pointer-events-none absolute -left-10 top-0 h-2/3 w-24 rotate-[18deg] bg-white/30 blur-xl" />
                 <img
                   src="/luna-logo.svg"
                   alt=""
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-8 -top-6 w-40 opacity-15"
+                  className="pointer-events-none absolute -right-8 -top-6 w-32 opacity-25"
                 />
 
                 <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
-                  <div className="mb-5 flex h-[66px] w-[66px] items-center justify-center rounded-[24px] border border-white/30 bg-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.44)] backdrop-blur-xl">
+                  <div className="mb-5 flex h-[66px] w-[66px] items-center justify-center rounded-[24px] border border-white/60 bg-white/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.44)] backdrop-blur-xl">
                     <img
                       src="/luna-logo.svg"
                       alt=""
                       aria-hidden="true"
-                      className="h-10 w-auto drop-shadow-sm"
+                      className="h-8 w-auto drop-shadow-sm"
                     />
                   </div>
                   <h1 className="text-[40px] font-black leading-none tracking-normal">
