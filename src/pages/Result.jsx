@@ -8,6 +8,105 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+const StockChartIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    {...props}
+  >
+    <defs>
+      <linearGradient id="stockGrad" x1="0" x2="1">
+        <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+        <stop offset="1" stopColor="#ffffff" stopOpacity="0.6" />
+      </linearGradient>
+    </defs>
+    {/* axes (thicker) */}
+    <path d="M4 20h16" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M4 4v16" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
+    {/* ticks */}
+    <path d="M7 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
+    <path d="M11 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
+    <path d="M15 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
+    <path d="M19 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
+
+    {/* smooth stock curve */}
+    <path
+      d="M5 16 C8 12,10 13,13 12 C15.5 11,16.5 9.5,19 8"
+      stroke="url(#stockGrad)"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+
+    {/* subtle fill under curve */}
+    <path d="M5 16 C8 12,10 13,13 12 C15.5 11,16.5 9.5,19 8 L19 20 L5 20 Z" fill="#ffffff" opacity="0.06" />
+
+    {/* chevron end marker */}
+    <path d="M16 6 L19 8 L16 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+  </svg>
+);
+
+const StockChartLarge = (props) => (
+  <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" {...props}>
+    <defs>
+      <linearGradient id="largeGrad" x1="0" x2="1">
+        <stop offset="0" stopColor="#fff" stopOpacity="0.98" />
+        <stop offset="1" stopColor="#fff" stopOpacity="0.6" />
+      </linearGradient>
+    </defs>
+    {/* grid */}
+    <g stroke="currentColor" strokeOpacity="0.06" strokeWidth="0.8">
+      <path d="M8 8 H56" />
+      <path d="M8 18 H56" />
+      <path d="M8 28 H56" />
+      <path d="M8 38 H56" />
+      <path d="M8 48 H56" />
+      <path d="M16 8 V56" />
+      <path d="M28 8 V56" />
+      <path d="M40 8 V56" />
+      <path d="M52 8 V56" />
+    </g>
+
+    {/* axes (thicker) */}
+    <path d="M8 56 H56" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M8 8 V56" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+
+    {/* axis labels */}
+    <text x="6" y="6" fontSize="6" fill="currentColor" opacity="0.6">y</text>
+    <text x="58" y="60" fontSize="6" fill="currentColor" opacity="0.6">x</text>
+
+    {/* filled polygon under the polyline (drawn first to avoid dark overlaps) */}
+    <polygon points="10,44 16,36 22,42 30,34 36,31 42,28 50,20 50,56 10,56" fill="currentColor" opacity="0.035" />
+
+    {/* jagged stock polyline (sharp turns) - drawn above the fill */}
+    <polyline
+      points="10,44 16,36 22,42 30,34 36,31 42,28 50,20"
+      stroke="currentColor"
+      strokeWidth={2.4}
+      strokeOpacity={1}
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      fill="none"
+    />
+
+    {/* chevron arrow at end (on top) */}
+    <path d="M46 17 L50 20 L46 23" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+  </svg>
+);
+
+const MoneyEmoji = ({ className = "", ...props }) => (
+  <span
+    aria-hidden="true"
+    className={`${className} inline-flex items-center justify-center`}
+    style={{ fontSize: "4rem", lineHeight: 1 }}
+    {...props}
+  >
+    💵
+  </span>
+);
+
 const hexToRgb = (hex) => {
   const fallback = { r: 43, g: 39, b: 75 };
   if (!hex) return fallback;
@@ -36,22 +135,18 @@ const hexToRgb = (hex) => {
 const DEPT_META = {
   eb: {
     Icon: BriefcaseBusiness,
-    keyword: "서비스 감각",
     type: "아이디어를 현실적인 비즈니스로 키우는 타입",
   },
   dc: {
     Icon: Palette,
-    keyword: "크리에이티브",
     type: "보이는 경험을 멋지게 설계하는 타입",
   },
   wp: {
     Icon: Code2,
-    keyword: "빌더",
     type: "상상을 바로 서비스로 구현하는 타입",
   },
   hs: {
     Icon: ShieldCheck,
-    keyword: "문제 해결",
     type: "허점을 찾고 단단하게 만드는 타입",
   },
 };
@@ -226,31 +321,28 @@ export default function Result({ dept, onRestart }) {
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/36 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-24px_48px_rgba(0,0,0,0.16)]" />
-                <img
-                  src="/dimigo-logo-white.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-4 top-8 w-36 opacity-[0.11]"
-                />
+                {/* dimigo 로고 제거 - DeptIcon을 중앙에 배치합니다 */}
                 {/* 빛 반사 효과 */}
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.07)_32%,transparent_64%)]" />
                 <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/18 blur-xl" />
+                <DeptIcon
+                  aria-hidden="true"
+                  strokeWidth={1.7}
+                  className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2 h-36 w-36 -rotate-12 text-white"
+                  style={{ top: "42%" }}
+                />
                 
                 <div className="relative z-10">
-                  <span className="result-stagger-1 inline-flex items-center gap-1.5 rounded-full border border-white/18 bg-white/12 px-3 py-1.5 text-[11px] font-black text-white/82 backdrop-blur-md">
-                    <DeptIcon size={14} strokeWidth={2.6} />
-                    {deptMeta.keyword}
-                  </span>
-                  <h3 className="result-stagger-2 mt-4 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
+                  <h3 className="result-stagger-1 mt-2 text-[31px] font-black leading-[1.12] tracking-normal [word-break:keep-all]">
                     {dept?.name}
                   </h3>
-                  <p className="result-stagger-3 mt-3 text-[13px] font-bold leading-[1.55] text-white/78 [word-break:keep-all]">
+                  <p className="result-stagger-2 mt-3 text-[13px] font-bold leading-[1.55] text-white/78 [word-break:keep-all]">
                     {deptMeta.type}
                   </p>
                 </div>
                 
                 <div
-                  className="result-stagger-4 relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
+                  className="result-stagger-3 relative z-10 mt-auto rounded-[22px] border border-white/28 bg-white/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_16px_38px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
                   style={{ transform: "translateZ(42px)" }}
                 >
                   <p className="text-[14px] font-semibold leading-[1.68] text-white/92 [word-break:keep-all]">

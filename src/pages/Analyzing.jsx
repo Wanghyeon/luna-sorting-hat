@@ -41,9 +41,10 @@ export default function Analyzing({ capturedImg, onComplete }) {
           clearInterval(textInterval);
           
           // 완료되면 텍스트를 최종 결과로 고정하고, 완료 상태로 변경! (아직 안 넘어감)
-          setCurrentDeptText(finalDept.name);
-          setResultDept(finalDept);
-          setIsDone(true);
+            setCurrentDeptText(finalDept.name);
+            setResultDept(finalDept);
+            console.log("[Analyzing] finalDept selected:", finalDept);
+            setIsDone(true);
           return 100;
         }
         return prev + 4;
