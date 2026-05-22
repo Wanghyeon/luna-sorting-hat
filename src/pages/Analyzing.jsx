@@ -27,7 +27,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
   useEffect(() => {
     // 1. 파이썬 백엔드 API 호출 (사진 전송)
     if (capturedImg) {
-      fetch("http://127.0.0.1:8000/api/predict", {
+      fetch(`${import.meta.env.VITE_API_URL}/api/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
