@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const DEPARTMENTS = [
   { id: "eb", name: "e-비즈니스과", color: "#730d1a", desc: "IT 기술과 비즈니스를 융합하여 미래의 창업가와 비즈니스 리더를 육성합니다." },
@@ -18,44 +18,82 @@ const hexToRgba = (hex, alpha) => {
 export default function Analyzing({ capturedImg, onComplete }) {
   const [currentDeptText, setCurrentDeptText] = useState("");
   const [progress, setProgress] = useState(0);
-  
-  // 분석 완료 상태와 최종 결정된 학과를 저장하는 state 추가
   const [isDone, setIsDone] = useState(false);
   const [resultDept, setResultDept] = useState(null);
 
+  // 🔥 [핵심 1] 타이머 안에서 최신 API 결과를 안전하게 확인하기 위해 useRef 사용
+  const apiResultRef = useRef(null);
+
   useEffect(() => {
-    // 최종 결과 미리 하나 뽑아두기
-    const finalDept = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
-    
-    // 학과 이름 또로로롱 고속 변경
+    // 1. 파이썬 백엔드 API 호출 (사진 전송)
+    if (capturedImg) {
+      fetch("http://127.0.0.1:8000/api/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: capturedImg }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const found = DEPARTMENTS.find((d) => d.id === data.department);
+            apiResultRef.current = found || DEPARTMENTS[0];
+            console.log("🎯 AI 모델 예측 성공:", apiResultRef.current.name);
+          } else {
+            console.error("❌ 서버 에러:", data.detail);
+            apiResultRef.current = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
+          }
+        })
+        .catch((err) => {
+          console.error("❌ 네트워크 통신 실패:", err);
+          apiResultRef.current = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
+        });
+    }
+
+    // 2. 학과 이름 고속 셔플 애니메이션
     const textInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * DEPARTMENTS.length);
       setCurrentDeptText(DEPARTMENTS[randomIndex].name);
     }, 70);
 
-    // 2.5초 동안 게이지 상승
+    // 3. 프로그레스바 상승 애니메이션
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
+        // 🔥 [핵심 2] 속도를 부드럽고 조금 느리게 조절 (50ms마다 0.55%씩 상승 = 약 8.3초 소요)
+        const next = prev + 0.55; 
+
+        // 96% 도달 시 서버 응답 대기
+        if (next >= 96 && !apiResultRef.current) {
+          return 96;
+        }
+
+        // 100% 도달 시 처리 로직
+        if (next >= 100) {
           clearInterval(progressInterval);
           clearInterval(textInterval);
-          
-          // 완료되면 텍스트를 최종 결과로 고정하고, 완료 상태로 변경! (아직 안 넘어감)
-            setCurrentDeptText(finalDept.name);
-            setResultDept(finalDept);
-            console.log("[Analyzing] finalDept selected:", finalDept);
+
+          // 100%가 되면 즉시 애니메이션을 멈추고 최종 텍스트를 확정합니다.
+          setCurrentDeptText(apiResultRef.current.name);
+          setResultDept(apiResultRef.current);
+
+          // 🔥 [핵심 3] 100%를 채운 상태로 0.8초(800ms) 동안 뜸을 들인 후 결과 화면으로 넘어갑니다.
+          setTimeout(() => {
             setIsDone(true);
+          }, 800);
+
           return 100;
         }
-        return prev + 4;
+
+        return next;
       });
-    }, 100);
+    }, 50); // 업데이트 주기를 100ms -> 50ms로 줄여 게이지가 훨씬 부드럽게 올라갑니다.
 
     return () => {
       clearInterval(textInterval);
       clearInterval(progressInterval);
     };
-  }, []);
+  }, [capturedImg]);
 
   const themeColor = resultDept?.color || "#524b9b";
   const themedBackground = isDone
@@ -139,7 +177,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
           </div>
         </section>
 
-        {/* 분석 중일 땐 진행바를, 완료됐을 땐 버튼을 렌더링 */}
+        {/* 진행바 / 결과 확인 버튼 */}
         <div className="mx-auto mt-6 w-full max-w-[350px]">
           {!isDone ? (
             <>
@@ -151,13 +189,15 @@ export default function Analyzing({ capturedImg, onComplete }) {
               </div>
               <div className="mt-3 flex items-center justify-between text-[13px] font-bold text-[#6B7684]">
                 <span>매칭 진행률</span>
-                <span className="text-[#524b9b]">{progress}%</span>
+                {/* Math.floor를 적용해 소수점 없이 깔끔하게 숫자가 표시되도록 수정 */}
+                <span className="text-[#524b9b]">{Math.floor(progress)}%</span>
               </div>
             </>
           ) : (
             <button
               onClick={() => onComplete(resultDept)}
               className="flex w-full items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 py-4 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98]"
+              style={{ backgroundColor: resultDept?.color }}
             >
               결과 확인하기
             </button>
