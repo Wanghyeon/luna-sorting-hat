@@ -1,13 +1,16 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
 import Swal from "sweetalert2";
 import { Camera, RefreshCw, ShieldCheck } from "lucide-react";
 
 export default function Home({ onCaptureComplete }) {
-  const [isCameraOpen, setIsCameraOpen] = useState(false); // 시작하기 누르면 true로 변경
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const webcamRef = useRef(null);
   const [facingMode, setFacingMode] = useState("user");
   const [hasCamera, setHasCamera] = useState(true);
+  
+  // 카운트다운 상태 추가 (null이면 대기, 숫자가 들어가면 카운트다운 시작)
+  const [countdown, setCountdown] = useState(null); 
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -17,6 +20,32 @@ export default function Home({ onCaptureComplete }) {
       Swal.fire("오류", "카메라를 찾을 수 없습니다.", "error");
     }
   }, [webcamRef, onCaptureComplete]);
+
+  // 카운트다운 타이머 로직
+  useEffect(() => {
+    if (countdown === null) return; // 카운트다운 중이 아닐 땐 무시
+
+    if (countdown > 0) {
+      // 1초마다 숫자 감소
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+
+    if (countdown === 0) {
+      // 0이 되면 찰칵! 촬영 후 상태 초기화
+      capture();
+      setCountdown(null);
+    }
+  }, [countdown, capture]);
+
+  // 촬영 버튼 클릭 시 실행할 함수
+  const handleStartCountdown = () => {
+    if (countdown === null) {
+      setCountdown(3); // 3초부터 시작
+    }
+  };
 
   // --- [1] 시작하기 전 화면 ---
   if (!isCameraOpen) {
@@ -45,8 +74,8 @@ export default function Home({ onCaptureComplete }) {
               결과는 재미로만 즐겨주세요.
             </p>
 
-            <div className="mt-7 flex w-full items-center gap-3 rounded-[20px] border border-white/70 bg-white/56 px-4 py-3.5 text-left shadow-[0_18px_42px_rgba(82,75,155,0.12),inset_0_1px_0_rgba(255,255,255,0.86)] backdrop-blur-xl">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[15px] border border-white/70 bg-white/46 text-[#524b9b] shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] backdrop-blur-md">
+            <div className="mt-7 flex w-full items-center gap-3 rounded-[20px] border border-white/70 bg-white/56 px-4 py-3.5 text-left shadow-[0_18px_42px_rgba(82,75,155,0.12),inset_0_1px_0_rgba(255,255,255,0.86)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[15px] border border-white/70 bg-white/46 text-[#524b9b] shadow-[inset_0_1px_0_rgba(255,255,255,0.82)]">
                 <ShieldCheck size={18} strokeWidth={2.5} />
               </div>
               <p className="text-[13px] font-semibold leading-[1.55] text-[#6B7684]">
@@ -115,18 +144,28 @@ export default function Home({ onCaptureComplete }) {
               <div className="absolute bottom-0 right-0 h-12 w-12 rounded-br-[28px] border-b-[3px] border-r-[3px] border-white/90" />
             </div>
           </div>
-          <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/20 bg-black/28 px-3.5 py-1.5 text-[11px] font-bold text-white/90 backdrop-blur-md">
+          <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/20 bg-black/28 px-3.5 py-1.5 text-[11px] font-bold text-white/90">
             얼굴을 가이드 안에 맞춰주세요
           </div>
+
+          {/* 🌟 카운트다운 오버레이 추가 🌟 */}
+          {countdown !== null && countdown > 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30">
+              <span className="text-[120px] font-black text-white drop-shadow-2xl animate-pulse">
+                {countdown}
+              </span>
+            </div>
+          )}
         </section>
 
         <div className="mt-auto flex w-full gap-3">
           <button
-            onClick={capture}
-            className="flex min-h-[56px] flex-1 items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98]"
+            onClick={handleStartCountdown} // 기존 capture -> handleStartCountdown으로 변경
+            disabled={countdown !== null} // 카운트다운 중에는 버튼 비활성화
+            className="flex min-h-[56px] flex-1 items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98] disabled:opacity-50 disabled:hover:translate-y-0"
           >
             <Camera size={21} strokeWidth={2.4} />
-            촬영하기
+            {countdown !== null ? `${countdown}초 뒤 촬영` : '촬영하기'}
           </button>
           <button
             onClick={() =>
@@ -134,8 +173,9 @@ export default function Home({ onCaptureComplete }) {
                 prev === "user" ? "environment" : "user",
               )
             }
+            disabled={countdown !== null} // 카운트다운 중 전환 방지
             aria-label="카메라 전환"
-            className="flex min-h-[56px] w-[60px] items-center justify-center rounded-[21px] border border-[#E5E8EF] bg-white text-[#524b9b] shadow-[0_10px_24px_rgba(15,23,42,0.075)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F3F1FF] active:translate-y-0 active:scale-[0.96]"
+            className="flex min-h-[56px] w-[60px] items-center justify-center rounded-[21px] border border-[#E5E8EF] bg-white text-[#524b9b] shadow-[0_10px_24px_rgba(15,23,42,0.075)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F3F1FF] active:translate-y-0 active:scale-[0.96] disabled:opacity-50 disabled:hover:translate-y-0"
           >
             <RefreshCw size={22} strokeWidth={2.4} />
           </button>
