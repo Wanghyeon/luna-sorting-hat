@@ -60,11 +60,13 @@ export default function Analyzing({ capturedImg, onComplete }) {
     // 3. 프로그레스바 상승 애니메이션
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        // 🔥 [핵심 2] 속도를 부드럽고 조금 느리게 조절 (50ms마다 0.55%씩 상승 = 약 8.3초 소요)
-        const next = prev + 0.3; 
+        const isApiReady = Boolean(apiResultRef.current);
+        const speed = isApiReady ? 4 : 0.3;
+        const next = prev + speed;
 
-        // 96% 도달 시 서버 응답 대기
-        if (next >= 96 && !apiResultRef.current) {
+        // API 응답 전에는 96%에서 멈추고,
+        // 응답이 오면 빠르게 100%까지 차오르게 합니다.
+        if (!isApiReady && next >= 96) {
           return 96;
         }
 
@@ -87,7 +89,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
 
         return next;
       });
-    }, 50); // 업데이트 주기를 100ms -> 50ms로 줄여 게이지가 훨씬 부드럽게 올라갑니다.
+    }, 50); // 업데이트 주기를 50ms로 유지해 게이지가 부드럽습니다.
 
     return () => {
       clearInterval(textInterval);
