@@ -61,7 +61,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         // 🔥 [핵심 2] 속도를 부드럽고 조금 느리게 조절 (50ms마다 0.55%씩 상승 = 약 8.3초 소요)
-        const next = prev + 0.55; 
+        const next = prev + 0.3; 
 
         // 96% 도달 시 서버 응답 대기
         if (next >= 96 && !apiResultRef.current) {
