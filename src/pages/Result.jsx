@@ -407,7 +407,7 @@ export default function Result({ dept, onRestart }) {
             className="flex w-full items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 py-4 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98]"
           >
             <RotateCcw size={20} strokeWidth={2.4} />
-            다른 결과 보기
+            처음으로 돌아가기
           </button>
           <button
             className="flex w-full items-center justify-center gap-2 rounded-[21px] border border-[#E5E8EF] bg-white px-5 py-4 text-[15px] font-extrabold text-[#524b9b] shadow-[0_10px_24px_rgba(15,23,42,0.075)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F3F1FF] active:translate-y-0 active:scale-[0.98]"
