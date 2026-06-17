@@ -8,8 +8,6 @@ export default function Home({ onCaptureComplete }) {
   const webcamRef = useRef(null);
   const [facingMode, setFacingMode] = useState("user");
   const [hasCamera, setHasCamera] = useState(true);
-  
-  // 카운트다운 상태 추가 (null이면 대기, 숫자가 들어가면 카운트다운 시작)
   const [countdown, setCountdown] = useState(null); 
 
   const capture = useCallback(() => {
@@ -21,12 +19,12 @@ export default function Home({ onCaptureComplete }) {
     }
   }, [webcamRef, onCaptureComplete]);
 
-  // 카운트다운 타이머 로직
+
   useEffect(() => {
-    if (countdown === null) return; // 카운트다운 중이 아닐 땐 무시
+    if (countdown === null) return;
 
     if (countdown > 0) {
-      // 1초마다 숫자 감소
+
       const timer = setTimeout(() => {
         setCountdown(countdown - 1);
       }, 1000);
@@ -34,20 +32,19 @@ export default function Home({ onCaptureComplete }) {
     }
 
     if (countdown === 0) {
-      // 0이 되면 찰칵! 촬영 후 상태 초기화
       capture();
       setCountdown(null);
     }
   }, [countdown, capture]);
 
-  // 촬영 버튼 클릭 시 실행할 함수
+  
   const handleStartCountdown = () => {
     if (countdown === null) {
-      setCountdown(3); // 3초부터 시작
+      setCountdown(3); 
     }
   };
 
-  // --- [1] 시작하기 전 화면 ---
+
   if (!isCameraOpen) {
     return (
       <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
@@ -99,7 +96,6 @@ export default function Home({ onCaptureComplete }) {
     );
   }
 
-  // --- [2] 시작하기 누른 후 (카메라 화면) ---
   return (
       <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col px-5 pb-5 pt-6">
@@ -134,7 +130,6 @@ export default function Home({ onCaptureComplete }) {
             )}
           </div>
 
-          {/* 얼굴 가이드라인 */}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.18),transparent_24%,transparent_74%,rgba(0,0,0,0.2))]" />
           <div className="pointer-events-none absolute inset-7 flex items-center justify-center">
             <div className="relative h-[68%] w-[74%] rounded-[44%]">
@@ -148,7 +143,7 @@ export default function Home({ onCaptureComplete }) {
             얼굴을 가이드 안에 맞춰주세요
           </div>
 
-          {/* 🌟 카운트다운 오버레이 추가 🌟 */}
+
           {countdown !== null && countdown > 0 && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30">
               <span className="text-[120px] font-black text-white drop-shadow-2xl animate-pulse">
@@ -160,8 +155,7 @@ export default function Home({ onCaptureComplete }) {
 
         <div className="mt-auto flex w-full gap-3">
           <button
-            onClick={handleStartCountdown} // 기존 capture -> handleStartCountdown으로 변경
-            disabled={countdown !== null} // 카운트다운 중에는 버튼 비활성화
+            onClick={handleStartCountdown} 
             className="flex min-h-[56px] flex-1 items-center justify-center gap-2 rounded-[21px] bg-[#524b9b] px-5 text-[16px] font-extrabold text-white shadow-[0_14px_32px_rgba(82,75,155,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#463f87] active:translate-y-0 active:scale-[0.98] disabled:opacity-50 disabled:hover:translate-y-0"
           >
             <Camera size={21} strokeWidth={2.4} />
@@ -173,7 +167,7 @@ export default function Home({ onCaptureComplete }) {
                 prev === "user" ? "environment" : "user",
               )
             }
-            disabled={countdown !== null} // 카운트다운 중 전환 방지
+            disabled={countdown !== null} 
             aria-label="카메라 전환"
             className="flex min-h-[56px] w-[60px] items-center justify-center rounded-[21px] border border-[#E5E8EF] bg-white text-[#524b9b] shadow-[0_10px_24px_rgba(15,23,42,0.075)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F3F1FF] active:translate-y-0 active:scale-[0.96] disabled:opacity-50 disabled:hover:translate-y-0"
           >

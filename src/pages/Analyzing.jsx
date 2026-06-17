@@ -21,11 +21,9 @@ export default function Analyzing({ capturedImg, onComplete }) {
   const [isDone, setIsDone] = useState(false);
   const [resultDept, setResultDept] = useState(null);
 
-  // 🔥 [핵심 1] 타이머 안에서 최신 API 결과를 안전하게 확인하기 위해 useRef 사용
   const apiResultRef = useRef(null);
 
   useEffect(() => {
-    // 1. 파이썬 백엔드 API 호출 (사진 전송)
     if (capturedImg) {
       fetch(`${import.meta.env.VITE_API_URL}/api/predict`, {
         method: "POST",
@@ -51,35 +49,26 @@ export default function Analyzing({ capturedImg, onComplete }) {
         });
     }
 
-    // 2. 학과 이름 고속 셔플 애니메이션
     const textInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * DEPARTMENTS.length);
       setCurrentDeptText(DEPARTMENTS[randomIndex].name);
     }, 70);
 
-    // 3. 프로그레스바 상승 애니메이션
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         const isApiReady = Boolean(apiResultRef.current);
         const speed = isApiReady ? 4 : 0.3;
         const next = prev + speed;
 
-        // API 응답 전에는 96%에서 멈추고,
-        // 응답이 오면 빠르게 100%까지 차오르게 합니다.
         if (!isApiReady && next >= 96) {
           return 96;
         }
 
-        // 100% 도달 시 처리 로직
         if (next >= 100) {
           clearInterval(progressInterval);
           clearInterval(textInterval);
-
-          // 100%가 되면 즉시 애니메이션을 멈추고 최종 텍스트를 확정합니다.
           setCurrentDeptText(apiResultRef.current.name);
           setResultDept(apiResultRef.current);
-
-          // 🔥 [핵심 3] 100%를 채운 상태로 0.8초(800ms) 동안 뜸을 들인 후 결과 화면으로 넘어갑니다.
           setTimeout(() => {
             setIsDone(true);
           }, 800);
@@ -89,7 +78,7 @@ export default function Analyzing({ capturedImg, onComplete }) {
 
         return next;
       });
-    }, 50); // 업데이트 주기를 50ms로 유지해 게이지가 부드럽습니다.
+    }, 50);
 
     return () => {
       clearInterval(textInterval);
@@ -120,7 +109,6 @@ export default function Analyzing({ capturedImg, onComplete }) {
           </p>
         </header>
 
-        {/* 사진 및 상단 고정 텍스트 */}
         <section className="relative mx-auto w-full max-w-[350px] overflow-hidden rounded-[30px] border border-white bg-[#111827] shadow-[0_20px_54px_rgba(15,23,42,0.18)]">
           <div className="aspect-[4/5] w-full overflow-hidden rounded-[29px]">
             {capturedImg && (
@@ -179,7 +167,6 @@ export default function Analyzing({ capturedImg, onComplete }) {
           </div>
         </section>
 
-        {/* 진행바 / 결과 확인 버튼 */}
         <div className="mx-auto mt-6 w-full max-w-[350px]">
           {!isDone ? (
             <>
@@ -191,7 +178,6 @@ export default function Analyzing({ capturedImg, onComplete }) {
               </div>
               <div className="mt-3 flex items-center justify-between text-[13px] font-bold text-[#6B7684]">
                 <span>매칭 진행률</span>
-                {/* Math.floor를 적용해 소수점 없이 깔끔하게 숫자가 표시되도록 수정 */}
                 <span className="text-[#524b9b]">{Math.floor(progress)}%</span>
               </div>
             </>

@@ -21,16 +21,12 @@ const StockChartIcon = (props) => (
         <stop offset="1" stopColor="#ffffff" stopOpacity="0.6" />
       </linearGradient>
     </defs>
-    {/* axes (thicker) */}
     <path d="M4 20h16" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
     <path d="M4 4v16" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
-    {/* ticks */}
     <path d="M7 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
     <path d="M11 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
     <path d="M15 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
     <path d="M19 20v-1" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.8" strokeLinecap="round" />
-
-    {/* smooth stock curve */}
     <path
       d="M5 16 C8 12,10 13,13 12 C15.5 11,16.5 9.5,19 8"
       stroke="url(#stockGrad)"
@@ -39,11 +35,7 @@ const StockChartIcon = (props) => (
       strokeLinejoin="round"
       fill="none"
     />
-
-    {/* subtle fill under curve */}
     <path d="M5 16 C8 12,10 13,13 12 C15.5 11,16.5 9.5,19 8 L19 20 L5 20 Z" fill="#ffffff" opacity="0.06" />
-
-    {/* chevron end marker */}
     <path d="M16 6 L19 8 L16 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
   </svg>
 );
@@ -56,7 +48,6 @@ const StockChartLarge = (props) => (
         <stop offset="1" stopColor="#fff" stopOpacity="0.6" />
       </linearGradient>
     </defs>
-    {/* grid */}
     <g stroke="currentColor" strokeOpacity="0.06" strokeWidth="0.8">
       <path d="M8 8 H56" />
       <path d="M8 18 H56" />
@@ -68,19 +59,11 @@ const StockChartLarge = (props) => (
       <path d="M40 8 V56" />
       <path d="M52 8 V56" />
     </g>
-
-    {/* axes (thicker) */}
     <path d="M8 56 H56" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     <path d="M8 8 V56" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-
-    {/* axis labels */}
     <text x="6" y="6" fontSize="6" fill="currentColor" opacity="0.6">y</text>
     <text x="58" y="60" fontSize="6" fill="currentColor" opacity="0.6">x</text>
-
-    {/* filled polygon under the polyline (drawn first to avoid dark overlaps) */}
     <polygon points="10,44 16,36 22,42 30,34 36,31 42,28 50,20 50,56 10,56" fill="currentColor" opacity="0.035" />
-
-    {/* jagged stock polyline (sharp turns) - drawn above the fill */}
     <polyline
       points="10,44 16,36 22,42 30,34 36,31 42,28 50,20"
       stroke="currentColor"
@@ -90,8 +73,6 @@ const StockChartLarge = (props) => (
       strokeLinecap="round"
       fill="none"
     />
-
-    {/* chevron arrow at end (on top) */}
     <path d="M46 17 L50 20 L46 23" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
   </svg>
 );
@@ -257,7 +238,6 @@ export default function Result({ dept, onRestart }) {
   return (
     <main className="min-h-dvh bg-[#F9FAFB] text-[#333D4B]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col px-5 pb-5 pt-6 select-none">
-        {/* 헤더 영역 */}
         <header className="w-full">
           <p className="text-[13px] font-bold text-[#524b9b]">결과가 나왔어요</p>
           <h2 className="mt-2.5 text-[28px] font-black leading-tight tracking-normal text-[#191F28]">
@@ -266,8 +246,6 @@ export default function Result({ dept, onRestart }) {
             디미고 학과는?
           </h2>
         </header>
-
-        {/* 3D 인터랙티브 카드 영역 */}
         <section
           className="result-card-enter relative mx-auto my-6 w-full max-w-[300px] aspect-[3/4.18]"
           style={{ perspective: "1500px" }}
@@ -278,8 +256,6 @@ export default function Result({ dept, onRestart }) {
               <span className="swipe-hint-right text-[30px] font-black leading-none">›</span>
             </div>
           )}
-
-          {/* 기울임(Tilt) 애니메이션 래퍼 */}
           <div
             ref={cardRef}
             onPointerDown={handlePointerDown}
@@ -298,7 +274,6 @@ export default function Result({ dept, onRestart }) {
               WebkitTransformStyle: "preserve-3d",
             }}
           >
-            {/* 뒤집기(Flip) 애니메이션 래퍼 */}
             <div 
               className="relative h-full w-full rounded-[30px] shadow-[0_26px_70px_rgba(15,23,42,0.24)] transition-transform duration-[850ms] will-change-transform"
               style={{ 
@@ -308,7 +283,6 @@ export default function Result({ dept, onRestart }) {
                 transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              {/* --- [앞면] 학과 결과 --- */}
               <div 
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-left text-white"
                 style={{ 
@@ -321,7 +295,6 @@ export default function Result({ dept, onRestart }) {
                 }}
               >
                 <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-24px_48px_rgba(0,0,0,0.16)]" />
-                {/* 빛 반사 효과 */}
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0.14)_32%,transparent_64%)]" />
                 <div className="pointer-events-none absolute -left-12 top-0 h-2/3 w-24 rotate-[18deg] bg-white/30 blur-xl" />
                 <DeptIcon
@@ -351,7 +324,7 @@ export default function Result({ dept, onRestart }) {
                 </div>
               </div>
 
-              {/* --- [뒷면] 루나 홍보 --- */}
+              
               <div 
                 className="absolute inset-0 flex h-full w-full flex-col overflow-hidden rounded-[30px] p-6 text-white"
                 style={{ 
@@ -400,7 +373,7 @@ export default function Result({ dept, onRestart }) {
           </div>
         </section>
 
-        {/* 하단 버튼 영역 */}
+        
         <div className="mt-auto flex w-full flex-col gap-3">
           <button
             onClick={onRestart}
